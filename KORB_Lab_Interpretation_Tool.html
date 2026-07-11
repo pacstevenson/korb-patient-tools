@@ -112,8 +112,8 @@
 
   <div class="jump-nav">
     <a class="jump-link" href="#priority">Priority</a>
-    <a class="jump-link" href="#standard">Standard Panel</a>
-    <a class="jump-link" href="#trt">TRT Panel</a>
+    <a class="jump-link" href="#standard">KORB Standard Longevity</a>
+    <a class="jump-link" href="#trt">KORB TRT</a>
     <a class="jump-link" href="#recommendations">Recommendations</a>
     <a class="jump-link" href="#noteblock">Copy-Paste Note</a>
   </div>
@@ -140,7 +140,7 @@
   </div>
 
   <div class="info-box">
-    <strong>How to use:</strong> Every lab defaults to <strong>Normal</strong> — only click High or Low on the values that are actually abnormal. Reference ranges aren't shown here (they're already on the lab report); this tool uses them behind the scenes to drive the Recommendations panel. PSA is added to the Standard panel automatically for male patients age 45+ — no separate checkbox needed. IGF-1 auto-flags against Robin's Sermorelin titration target (120-160 ng/mL goal band; reduce-dose ceiling >190 male / >170 female) — not the general Quest population range, which is much wider and isn't the right benchmark for a patient on therapy. Guidance in <strong style="color:var(--high);">red</strong> is sourced from Robin's Clinician Peptide Reference Binder or the program QRCs. Guidance in <strong>amber is generic and has not been clinically reviewed</strong> — treat it as a prompt to apply judgment, not a protocol.
+    <strong>How to use:</strong> Every lab defaults to <strong>Normal</strong> — only click High or Low on the values that are actually abnormal. Reference ranges aren't shown here (they're already on the lab report); this tool uses them behind the scenes to drive the Recommendations panel. PSA is added to the Standard panel automatically for male patients age 45+ — no separate checkbox needed. IGF-1 auto-flags against Robin's titration target (120-160 ng/mL goal band; reduce-dose ceiling >190 male / >170 female) — the same target applies across Sermorelin, CJC-1295/Ipamorelin, and Tesamorelin per Robin, for consistency across programs — not the general Quest population range, which is much wider and isn't the right benchmark for a patient on therapy. Guidance in <strong style="color:var(--high);">red</strong> is sourced from Robin's Clinician Peptide Reference Binder or the program QRCs. Guidance in <strong>amber is generic and has not been clinically reviewed</strong> — treat it as a prompt to apply judgment, not a protocol.
   </div>
 
   <div id="priorityRoot"></div>
@@ -239,8 +239,8 @@ priority: [
   {id:'insulin', name:'Fasting Insulin', code:'561', unit:'uIU/mL', range:()=>[null,18.4], type:'toggle',
     highG:{text:'GH is diabetogenic. Per Robin\'s titration decision tree, this is checked FIRST alongside HbA1c, before IGF-1 — upward drift here mandates a dose reduction regardless of where IGF-1 sits.', sourced:true}},
   {id:'igf1', name:'IGF-1 (LC/MS)', code:'16293', unit:'ng/mL', type:'numeric',
-    highG:{text:'Above the reduce-dose ceiling (>190 male / >170 female) from Robin\'s Sermorelin titration guidance. Target goal band is 120-160 ng/mL. Check HbA1c/Fasting Insulin first — an upward drift there overrides a reassuring IGF-1 read. This tool flags range only; it does not calculate the actual dose step, and per-agent adjustment logic (CJC-1295/Ipamorelin, Tesamorelin) is still pending from Don. Note: this specific numeric target is written for Sermorelin — the other two agents use an SD-score-based ceiling in the binder without a flat number.', sourced:true},
-    lowG:{text:'Below the 120 ng/mL goal-band floor from Robin\'s Sermorelin titration guidance — may indicate insufficient response. This tool flags range only; it does not calculate the actual dose step, and per-agent adjustment logic is still pending from Don.', sourced:true}},
+    highG:{text:'Above the reduce-dose ceiling (>190 male / >170 female) from Robin\'s titration guidance. Target goal band is 120-160 ng/mL. Check HbA1c/Fasting Insulin first — an upward drift there overrides a reassuring IGF-1 read. This tool flags range only; it does not calculate the actual dose step. Confirmed per Robin: this target applies the same way to all three GH-axis agents (Sermorelin, CJC-1295/Ipamorelin, Tesamorelin) — kept consistent across programs rather than using a separate SD-score-based ceiling for the latter two.', sourced:true},
+    lowG:{text:'Below the 120 ng/mL goal-band floor from Robin\'s titration guidance — may indicate insufficient response. Applies the same way across Sermorelin, CJC-1295/Ipamorelin, and Tesamorelin. This tool flags range only; it does not calculate the actual dose step.', sourced:true}},
 ],
 trt: [
   {id:'wbc_trt', name:'WBC', code:'6399', unit:'Thousand/uL', group:'cbc', range:()=>[3.8,10.8], type:'toggle',
@@ -292,9 +292,9 @@ function activePanelIds(){
 function panelTitle(id){
   if(id==='standard'){
     const ctx = getCtx();
-    return (ctx.gender==='male' && ctx.age>=45) ? 'Standard Panel + PSA (Male 45+)' : 'Standard Panel';
+    return (ctx.gender==='male' && ctx.age>=45) ? 'KORB Men 45 Longevity' : 'KORB Standard Longevity';
   }
-  return {trt:'TRT Panel'}[id];
+  return {trt:'KORB TRT'}[id];
 }
 
 const GROUP_META = {
@@ -389,7 +389,8 @@ function rowHtml(l, ctx){
     </div></td></tr>`;
 }
 
-// IGF-1: Robin's binder gives a flat Sermorelin titration target, not an age-tiered population range —
+// IGF-1: Robin's flat titration target (confirmed to apply across Sermorelin, CJC-1295/Ipamorelin,
+// and Tesamorelin alike, not an age-tiered population range) —
 // target 120-160 ng/mL; reduce-dose ceiling >190 (male) / >170 (female). This is the on-therapy target,
 // not the general Quest reference range (which is much wider and meant for untreated screening).
 function igf1StatusClass(val, ctx){

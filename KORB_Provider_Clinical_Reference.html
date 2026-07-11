@@ -276,11 +276,30 @@
           <option value="peakB">Peak Performance — Pathway B</option>
         </select>
       </div>
-      <div class="cg" id="peakTesaGroup" style="display:none;"><label for="selTesaDose">Tesamorelin Starting Dose</label>
+      <div class="cg" id="gwSermDoseGroup" style="display:none;"><label for="selGwSermDose">Sermorelin Dose (this cycle)</label>
+        <select id="selGwSermDose" onchange="onProgramChange()">
+          <option value="200">200 mcg (starting dose)</option>
+          <option value="300">300 mcg</option>
+          <option value="400">400 mcg</option>
+          <option value="500">500 mcg</option>
+        </select>
+        <span id="igf1NoteSerm" style="font-size:10.5px;color:var(--mu);display:block;margin-top:3px;"></span>
+      </div>
+      <div class="cg" id="peakCjcDoseGroup" style="display:none;"><label for="selCjcDose">CJC-1295/Ipamorelin Dose (this cycle)</label>
+        <select id="selCjcDose" onchange="onProgramChange()">
+          <option value="100">100 mcg/100 mcg (starting dose)</option>
+          <option value="150">150 mcg/150 mcg</option>
+          <option value="200">200 mcg/200 mcg</option>
+        </select>
+        <span id="igf1NoteCjc" style="font-size:10.5px;color:var(--mu);display:block;margin-top:3px;"></span>
+      </div>
+      <div class="cg" id="peakTesaGroup" style="display:none;"><label for="selTesaDose">Tesamorelin Dose (this cycle)</label>
         <select id="selTesaDose" onchange="onProgramChange()">
-          <option value="1mg">1 mg</option>
+          <option value="1mg">1 mg (starting dose)</option>
+          <option value="15mg">1.5 mg</option>
           <option value="2mg">2 mg</option>
         </select>
+        <span id="igf1NoteTesa" style="font-size:10.5px;color:var(--mu);display:block;margin-top:3px;"></span>
       </div>
       <div class="cg" id="fdnAgentGroup" style="display:none;"><label for="selFdnAgent">Foundation Agent</label>
         <select id="selFdnAgent" onchange="onProgramChange()">
@@ -398,6 +417,56 @@ var PHARM = {
 };
 
 // ─── FULL TEBRA PRESCRIBING DATA (exact fields for Compounded Drug Favorite entry) ──
+var SERM_COUNSEL = [
+  'Not GH replacement — stimulates body\'s own GH signaling pathway',
+  'Lifestyle (nutrition, resistance training, sleep) remains critical — not a substitute',
+  'Response varies between patients; benefit not guaranteed',
+  'Do not combine with other GH-axis therapies without provider approval',
+  '6 days ON / 1 day OFF pattern must be followed — Monday through Saturday, Sunday off (recommended)',
+  'Take at bedtime on an empty stomach — timing is clinically relevant',
+  'Discard vial 28 days after initial puncture — do not use beyond this date regardless of remaining volume',
+];
+var SERM_MONITOR = [
+  'Sleep quality and recovery quality',
+  'Energy and wellness trend',
+  'Body composition / waist circumference trend',
+  'Exercise tolerance and lean mass preservation',
+  'Edema / fluid retention',
+  'Headache',
+  'Joint discomfort',
+  'Paresthesias / tingling',
+  'Glucose-related changes (if at-risk)',
+  'IGF-1 (per lab protocol)',
+  'Injection site reactions',
+  'Adherence to 6-on/1-off schedule',
+];
+var CJC_COUNSEL = [
+  'Dual-peptide GH secretagogue combo — not GH replacement',
+  'Lifestyle (nutrition, resistance training, sleep) remains critical — not a substitute',
+  'Response varies between patients; benefit not guaranteed',
+  'Do not combine with other GH-axis therapies without provider approval',
+  '6 days ON / 1 day OFF pattern must be followed — Monday through Saturday, Sunday off',
+  'Take at bedtime on an empty stomach — timing is clinically relevant',
+  'Discard vial 28 days after initial puncture — do not use beyond this date regardless of remaining volume',
+];
+var TESA_COUNSEL = [
+  'GH secretagogue targeting visceral fat reduction and body composition — not GH replacement',
+  'Lifestyle (nutrition, resistance training, sleep) remains critical — not a substitute',
+  'Response varies between patients; benefit not guaranteed',
+  'Do not combine with other GH-axis therapies without provider approval',
+  '6 days ON / 1 day OFF pattern must be followed — Monday through Saturday, Sunday off',
+  'Discard vial 28 days after initial puncture — do not use beyond this date regardless of remaining volume',
+];
+var TESA_MONITOR = [
+  'Body composition / visceral fat trend',
+  'Energy and wellness trend',
+  'Edema / fluid retention',
+  'Glucose-related changes (if at-risk)',
+  'IGF-1 (per lab protocol)',
+  'Injection site reactions',
+  'Adherence to 6-on/1-off schedule',
+];
+
 var RX = {
   sermorelin: {
     name: 'Sermorelin',
@@ -434,29 +503,122 @@ var RX = {
     schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Sunday off recommended · Active all 16 weeks of cycle',
     timing: 'Bedtime, on an empty stomach (\u22652 hrs post-meal)',
     storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
-    counseling: [
-      'Not GH replacement — stimulates body\'s own GH signaling pathway',
-      'Lifestyle (nutrition, resistance training, sleep) remains critical — not a substitute',
-      'Response varies between patients; benefit not guaranteed',
-      'Do not combine with other GH-axis therapies without provider approval',
-      '6 days ON / 1 day OFF pattern must be followed — Monday through Saturday, Sunday off (recommended)',
-      'Take at bedtime on an empty stomach — timing is clinically relevant',
-      'Discard vial 28 days after initial puncture — do not use beyond this date regardless of remaining volume',
-    ],
-    monitor: [
-      'Sleep quality and recovery quality',
-      'Energy and wellness trend',
-      'Body composition / waist circumference trend',
-      'Exercise tolerance and lean mass preservation',
-      'Edema / fluid retention',
-      'Headache',
-      'Joint discomfort',
-      'Paresthesias / tingling',
-      'Glucose-related changes (if at-risk)',
-      'IGF-1 (per lab protocol)',
-      'Injection site reactions',
-      'Adherence to 6-on/1-off schedule',
-    ]
+    counseling: SERM_COUNSEL,
+    monitor: SERM_MONITOR
+  },
+  sermorelin300: {
+    name: 'Sermorelin 300mcg',
+    premier: {
+      label: 'PREMIER – Sermorelin 300 mcg SQ Injection',
+      fields: [
+        { field: 'Drug Formulation', val: 'Sermorelin 1 mg/ml inj', copy: true },
+        { field: 'Name', val: 'PREMIER – Sermorelin 300 mcg SQ Injection', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '9', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '2', copy: true },
+        { field: 'Days Supply', val: '28', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT SERMORELIN 30 UNITS SUBCUTANEOUSLY AT BEDTIME, 6 DAYS ON, 1 DAY OFF (MONDAY THROUGH SATURDAY, SUNDAY OFF RECOMMENDED), ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    greenwich: {
+      label: 'GREENWICH – Sermorelin 0.9 mg SQ Injection',
+      fields: [
+        { field: 'Drug Formulation', val: 'KBH   Sermorelin 3mg/mL', copy: true },
+        { field: 'Name', val: 'GREENWICH – Sermorelin 0.9 mg SQ Injection', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '15', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '0', copy: true },
+        { field: 'Days Supply', val: '84', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT SERMORELIN 10 UNITS SUBCUTANEOUSLY AT BEDTIME, 6 DAYS ON, 1 DAY OFF (MONDAY THROUGH SATURDAY, SUNDAY OFF RECOMMENDED), ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Sunday off recommended · Active all 16 weeks of cycle',
+    timing: 'Bedtime, on an empty stomach (\u22652 hrs post-meal)',
+    storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
+    counseling: SERM_COUNSEL,
+    monitor: SERM_MONITOR
+  },
+  sermorelin400: {
+    name: 'Sermorelin 400mcg',
+    premier: {
+      label: 'PREMIER – Sermorelin 400 mcg SQ Injection',
+      fields: [
+        { field: 'Drug Formulation', val: 'Sermorelin 1 mg/ml inj', copy: true },
+        { field: 'Name', val: 'PREMIER – Sermorelin 400 mcg SQ Injection', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '12', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '2', copy: true },
+        { field: 'Days Supply', val: '28', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT SERMORELIN 40 UNITS SUBCUTANEOUSLY AT BEDTIME, 6 DAYS ON, 1 DAY OFF (MONDAY THROUGH SATURDAY, SUNDAY OFF RECOMMENDED), ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    greenwich: {
+      label: 'GREENWICH – Sermorelin 1.2 mg SQ Injection',
+      fields: [
+        { field: 'Drug Formulation', val: 'KBH   Sermorelin 3mg/mL', copy: true },
+        { field: 'Name', val: 'GREENWICH – Sermorelin 1.2 mg SQ Injection', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '15', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '0', copy: true },
+        { field: 'Days Supply', val: '84', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT SERMORELIN 13 UNITS SUBCUTANEOUSLY AT BEDTIME, 6 DAYS ON, 1 DAY OFF (MONDAY THROUGH SATURDAY, SUNDAY OFF RECOMMENDED), ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Sunday off recommended · Active all 16 weeks of cycle',
+    timing: 'Bedtime, on an empty stomach (\u22652 hrs post-meal)',
+    storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
+    counseling: SERM_COUNSEL,
+    monitor: SERM_MONITOR
+  },
+  sermorelin500: {
+    name: 'Sermorelin 500mcg',
+    premier: {
+      label: 'PREMIER – Sermorelin 500 mcg SQ Injection',
+      fields: [
+        { field: 'Drug Formulation', val: 'Sermorelin 1 mg/ml inj', copy: true },
+        { field: 'Name', val: 'PREMIER – Sermorelin 500 mcg SQ Injection', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '12', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '2', copy: true },
+        { field: 'Days Supply', val: '28', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT SERMORELIN 50 UNITS SUBCUTANEOUSLY AT BEDTIME, 6 DAYS ON, 1 DAY OFF (MONDAY THROUGH SATURDAY, SUNDAY OFF RECOMMENDED), ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    greenwich: {
+      label: 'GREENWICH – Sermorelin 1.5 mg SQ Injection',
+      fields: [
+        { field: 'Drug Formulation', val: 'KBH   Sermorelin 3mg/mL', copy: true },
+        { field: 'Name', val: 'GREENWICH – Sermorelin 1.5 mg SQ Injection', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '15', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '0', copy: true },
+        { field: 'Days Supply', val: '84', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT SERMORELIN 17 UNITS SUBCUTANEOUSLY AT BEDTIME, 6 DAYS ON, 1 DAY OFF (MONDAY THROUGH SATURDAY, SUNDAY OFF RECOMMENDED), ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Sunday off recommended · Active all 16 weeks of cycle',
+    timing: 'Bedtime, on an empty stomach (\u22652 hrs post-meal)',
+    storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
+    counseling: SERM_COUNSEL,
+    monitor: SERM_MONITOR
   },
   bpc157: {
     name: 'BPC-157',
@@ -513,18 +675,18 @@ var RX = {
     ]
   },
   cjcipam: {
-    name: 'CJC-1295 / Ipamorelin',
+    name: 'CJC-1295 / Ipamorelin 100mcg/100mcg',
     premier: {
-      label: 'PREMIER – CJC/Ipam 105 mcg/175mcg SQ Inj',
+      label: 'PREMIER – CJC/Ipam 100 mcg/100 mcg SQ Inj',
       fields: [
-        { field: 'Drug Formulation', val: 'CJC-1295 / Ipamorelin 1.5 mg/2.5 mg inj', copy: true },
-        { field: 'Name', val: 'PREMIER – CJC/Ipam 105 mcg/175mcg SQ Inj', copy: true },
+        { field: 'Drug Formulation', val: 'CJC-1295 / Ipamorelin 1 mg/1 mg per 1mL inj', copy: true },
+        { field: 'Name', val: 'PREMIER – CJC/Ipam 100 mcg/100 mcg SQ Inj', copy: true },
         { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
-        { field: 'Quantity', val: '6', copy: true },
+        { field: 'Quantity', val: '3', copy: true },
         { field: 'Unit', val: 'ml', copy: true },
         { field: 'Refill', val: '2', copy: true },
         { field: 'Days Supply', val: '28', copy: true },
-        { field: 'Patient Instructions', val: 'INJECT 7 UNITS SUBCUTANEOUSLY MON–SAT BEFORE BED ON AN EMPTY STOMACH', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 10 UNITS SUBCUTANEOUSLY MON–SAT BEFORE BED ON AN EMPTY STOMACH', copy: true },
         { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
         { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
       ]
@@ -539,7 +701,7 @@ var RX = {
         { field: 'Unit', val: 'ml', copy: true },
         { field: 'Refill', val: '0', copy: true },
         { field: 'Days Supply', val: '84', copy: true },
-        { field: 'Patient Instructions', val: 'Inject as directed by prescriber.', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 5 UNITS SUBCUTANEOUSLY MON–SAT BEFORE BED ON AN EMPTY STOMACH', copy: true },
         { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
         { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
       ]
@@ -547,29 +709,84 @@ var RX = {
     schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Mon–Sat, Sunday off · Active Weeks 1–12, off Weeks 13–16 of cycle',
     timing: 'Before bed, on an empty stomach',
     storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
-    counseling: [
-      'Dual-peptide GH secretagogue combo — not GH replacement',
-      'Lifestyle (nutrition, resistance training, sleep) remains critical — not a substitute',
-      'Response varies between patients; benefit not guaranteed',
-      'Do not combine with other GH-axis therapies without provider approval',
-      '6 days ON / 1 day OFF pattern must be followed — Monday through Saturday, Sunday off',
-      'Take at bedtime on an empty stomach — timing is clinically relevant',
-      'Discard vial 28 days after initial puncture — do not use beyond this date regardless of remaining volume',
-    ],
-    monitor: [
-      'Sleep quality and recovery quality',
-      'Energy and wellness trend',
-      'Body composition / waist circumference trend',
-      'Exercise tolerance and lean mass preservation',
-      'Edema / fluid retention',
-      'Headache',
-      'Joint discomfort',
-      'Paresthesias / tingling',
-      'Glucose-related changes (if at-risk)',
-      'IGF-1 (per lab protocol)',
-      'Injection site reactions',
-      'Adherence to 6-on/1-off schedule',
-    ]
+    counseling: CJC_COUNSEL,
+    monitor: SERM_MONITOR
+  },
+  cjcipam150: {
+    name: 'CJC-1295 / Ipamorelin 150mcg/150mcg',
+    premier: {
+      label: 'PREMIER – CJC/Ipam 150 mcg/150 mcg SQ Inj',
+      fields: [
+        { field: 'Drug Formulation', val: 'CJC-1295 / Ipamorelin 1 mg/1 mg per 1mL inj', copy: true },
+        { field: 'Name', val: 'PREMIER – CJC/Ipam 150 mcg/150 mcg SQ Inj', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '6', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '2', copy: true },
+        { field: 'Days Supply', val: '28', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 15 UNITS SUBCUTANEOUSLY MON–SAT BEFORE BED ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    greenwich: {
+      label: 'GREENWICH – CJC/Ipam 150 mcg/150 mcg SQ Inj',
+      fields: [
+        { field: 'Drug Formulation', val: 'KBH CJC/Ipamorelin 2mg/2mg/mL', copy: true },
+        { field: 'Name', val: 'GREENWICH – CJC/Ipam 150 mcg/150 mcg SQ Inj', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '15', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '0', copy: true },
+        { field: 'Days Supply', val: '84', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 7.5 UNITS SUBCUTANEOUSLY MON–SAT BEFORE BED ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Mon–Sat, Sunday off · Active Weeks 1–12, off Weeks 13–16 of cycle',
+    timing: 'Before bed, on an empty stomach',
+    storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
+    counseling: CJC_COUNSEL,
+    monitor: SERM_MONITOR
+  },
+  cjcipam200: {
+    name: 'CJC-1295 / Ipamorelin 200mcg/200mcg',
+    premier: {
+      label: 'PREMIER – CJC/Ipam 200 mcg/200 mcg SQ Inj',
+      fields: [
+        { field: 'Drug Formulation', val: 'CJC-1295 / Ipamorelin 1 mg/1 mg per 1mL inj', copy: true },
+        { field: 'Name', val: 'PREMIER – CJC/Ipam 200 mcg/200 mcg SQ Inj', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '6', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '2', copy: true },
+        { field: 'Days Supply', val: '28', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 20 UNITS SUBCUTANEOUSLY MON–SAT BEFORE BED ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    greenwich: {
+      label: 'GREENWICH – CJC/Ipam 200 mcg/200 mcg SQ Inj',
+      fields: [
+        { field: 'Drug Formulation', val: 'KBH CJC/Ipamorelin 2mg/2mg/mL', copy: true },
+        { field: 'Name', val: 'GREENWICH – CJC/Ipam 200 mcg/200 mcg SQ Inj', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '15', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '0', copy: true },
+        { field: 'Days Supply', val: '84', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 10 UNITS SUBCUTANEOUSLY MON–SAT BEFORE BED ON AN EMPTY STOMACH', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Mon–Sat, Sunday off · Active Weeks 1–12, off Weeks 13–16 of cycle',
+    timing: 'Before bed, on an empty stomach',
+    storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
+    counseling: CJC_COUNSEL,
+    monitor: SERM_MONITOR
   },
   ghkcu: {
     name: 'GHK-Cu',
@@ -648,7 +865,7 @@ var RX = {
         { field: 'Unit', val: 'ml', copy: true },
         { field: 'Refill', val: '0', copy: true },
         { field: 'Days Supply', val: '84', copy: true },
-        { field: 'Patient Instructions', val: 'Inject as directed by prescriber.', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 33 UNITS SUBCUTANEOUSLY EVERY EVENING MONDAY THROUGH SATURDAY (6 DAYS ON, 1 DAY OFF)', copy: true },
         { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
         { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
       ]
@@ -656,23 +873,46 @@ var RX = {
     schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Mon–Sat, Sunday off · Active Weeks 1–12, off Weeks 13–16 of cycle',
     timing: 'Evening',
     storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
-    counseling: [
-      'GH secretagogue targeting visceral fat reduction and body composition — not GH replacement',
-      'Lifestyle (nutrition, resistance training, sleep) remains critical — not a substitute',
-      'Response varies between patients; benefit not guaranteed',
-      'Do not combine with other GH-axis therapies without provider approval',
-      '6 days ON / 1 day OFF pattern must be followed — Monday through Saturday, Sunday off',
-      'Discard vial 28 days after initial puncture — do not use beyond this date regardless of remaining volume',
-    ],
-    monitor: [
-      'Body composition / visceral fat trend',
-      'Energy and wellness trend',
-      'Edema / fluid retention',
-      'Glucose-related changes (if at-risk)',
-      'IGF-1 (per lab protocol)',
-      'Injection site reactions',
-      'Adherence to 6-on/1-off schedule',
-    ]
+    counseling: TESA_COUNSEL,
+    monitor: TESA_MONITOR
+  },
+  tesamorelin15mg: {
+    name: 'Tesamorelin 1.5mg',
+    premier: {
+      label: 'PREMIER – Tesamorelin SQ 1.5 mg inj',
+      fields: [
+        { field: 'Drug Formulation', val: 'Tesamorelin inj 5 mg/ml', copy: true },
+        { field: 'Name', val: 'PREMIER – Tesamorelin SQ 1.5 mg inj', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '9', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '2', copy: true },
+        { field: 'Days Supply', val: '28', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 30 UNITS SUBCUTANEOUSLY EVERY EVENING MONDAY THROUGH SATURDAY (6 DAYS ON, 1 DAY OFF)', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    greenwich: {
+      label: 'GREENWICH – Tesamorelin SQ 1.5 mg inj',
+      fields: [
+        { field: 'Drug Formulation', val: 'KBH Tesamorelin 3mg/mL', copy: true },
+        { field: 'Name', val: 'GREENWICH – Tesamorelin SQ 1.5 mg inj', copy: true },
+        { field: 'Allow Substitution', val: 'Yes — select Allow Substitution', copy: false },
+        { field: 'Quantity', val: '45', copy: true },
+        { field: 'Unit', val: 'ml', copy: true },
+        { field: 'Refill', val: '0', copy: true },
+        { field: 'Days Supply', val: '84', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 50 UNITS SUBCUTANEOUSLY EVERY EVENING MONDAY THROUGH SATURDAY (6 DAYS ON, 1 DAY OFF)', copy: true },
+        { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
+        { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
+      ]
+    },
+    schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Mon–Sat, Sunday off · Active Weeks 1–12, off Weeks 13–16 of cycle',
+    timing: 'Evening',
+    storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
+    counseling: TESA_COUNSEL,
+    monitor: TESA_MONITOR
   },
   tesamorelin2mg: {
     name: 'Tesamorelin 2mg',
@@ -701,7 +941,7 @@ var RX = {
         { field: 'Unit', val: 'ml', copy: true },
         { field: 'Refill', val: '0', copy: true },
         { field: 'Days Supply', val: '84', copy: true },
-        { field: 'Patient Instructions', val: 'Inject as directed by prescriber.', copy: true },
+        { field: 'Patient Instructions', val: 'INJECT 67 UNITS SUBCUTANEOUSLY EVERY EVENING MONDAY THROUGH SATURDAY (6 DAYS ON, 1 DAY OFF)', copy: true },
         { field: 'Reason for Compounding', val: 'Customized peptide dosing', copy: true },
         { field: 'Pharmacy Instructions', val: 'Bill to KORB Health Group and ship to the patient. Customized peptide dosing', copy: true },
       ]
@@ -709,36 +949,21 @@ var RX = {
     schedule: 'Nightly SQ · 6 days ON / 1 day OFF · Mon–Sat, Sunday off · Active Weeks 1–12, off Weeks 13–16 of cycle',
     timing: 'Evening',
     storage: 'Refrigerate (36\u201346 \u00b0F). Do not freeze. Protect from light. Discard 28 days after initial puncture.',
-    counseling: [
-      'GH secretagogue targeting visceral fat reduction and body composition — not GH replacement',
-      'Lifestyle (nutrition, resistance training, sleep) remains critical — not a substitute',
-      'Response varies between patients; benefit not guaranteed',
-      'Do not combine with other GH-axis therapies without provider approval',
-      '6 days ON / 1 day OFF pattern must be followed — Monday through Saturday, Sunday off',
-      'Discard vial 28 days after initial puncture — do not use beyond this date regardless of remaining volume',
-    ],
-    monitor: [
-      'Body composition / visceral fat trend',
-      'Energy and wellness trend',
-      'Edema / fluid retention',
-      'Glucose-related changes (if at-risk)',
-      'IGF-1 (per lab protocol)',
-      'Injection site reactions',
-      'Adherence to 6-on/1-off schedule',
-    ]
+    counseling: TESA_COUNSEL,
+    monitor: TESA_MONITOR
   }
 };
 
 // ─── FOUNDATION AGENT METADATA (single-agent standalone pathway) ──────────────
 var FOUNDATION_AGENTS = {
-  sermorelin: { key:'sermorelin', label:'Sermorelin', onWeeks:[1,12], doseLabel:'200 mcg', titrate:true,
+  sermorelin: { key:'sermorelin', label:'Sermorelin', onWeeks:[1,12], doseLabel:'200 mcg', titrate:false,
     schedule:'Nightly SQ · 6 days ON / 1 day OFF · Mon–Sat, Sunday off recommended · Active Weeks 1–12, off Weeks 13–16 of cycle',
     timing:'Bedtime, on an empty stomach (\u22652 hrs post-meal)' },
   bpc157: { key:'bpc157', label:'BPC-157', onWeeks:[1,6], doseLabel:'500 mcg', titrate:false,
     schedule:'Daily SQ · Active Weeks 1–6, off Weeks 7–16 of cycle',
     timing:'Any consistent time daily. No food restriction.' },
   cjcipam: { key:'cjcipam', label:'CJC-1295 / Ipamorelin', onWeeks:[1,12], doseLabel:'(per pharmacy — see Rx reference)',
-    doseLabelByPharm:{ greenwich:'100 mcg CJC-1295 / 100 mcg Ipamorelin', premier:'105 mcg CJC-1295 / 175 mcg Ipamorelin' },
+    doseLabelByPharm:{ greenwich:'100 mcg CJC-1295 / 100 mcg Ipamorelin', premier:'100 mcg CJC-1295 / 100 mcg Ipamorelin' },
     titrate:false,
     schedule:'Nightly SQ · 6 days ON / 1 day OFF · Mon–Sat, Sunday off · Active Weeks 1–12, off Weeks 13–16 of cycle',
     timing:'Before bed, on an empty stomach' }
@@ -754,13 +979,33 @@ var ACTUAL_DIRECTIONS = {
     premier:'Inject 20 units subcutaneously at bedtime, 6 days on, 1 day off (Monday through Saturday, Sunday off recommended), on an empty stomach.',
     greenwich:'Inject 7 units subcutaneously once daily at bedtime, on an empty stomach. Monday through Saturday, Sunday off recommended.'
   },
+  sermorelin300: {
+    premier:'Inject 30 units subcutaneously at bedtime, 6 days on, 1 day off (Monday through Saturday, Sunday off recommended), on an empty stomach.',
+    greenwich:'Inject 10 units subcutaneously once daily at bedtime, on an empty stomach. Monday through Saturday, Sunday off recommended.'
+  },
+  sermorelin400: {
+    premier:'Inject 40 units subcutaneously at bedtime, 6 days on, 1 day off (Monday through Saturday, Sunday off recommended), on an empty stomach.',
+    greenwich:'Inject 13 units subcutaneously once daily at bedtime, on an empty stomach. Monday through Saturday, Sunday off recommended.'
+  },
+  sermorelin500: {
+    premier:'Inject 50 units subcutaneously at bedtime, 6 days on, 1 day off (Monday through Saturday, Sunday off recommended), on an empty stomach.',
+    greenwich:'Inject 17 units subcutaneously once daily at bedtime, on an empty stomach. Monday through Saturday, Sunday off recommended.'
+  },
   bpc157: {
     premier:'Inject 13 units subcutaneously once daily.',
     greenwich:'Inject 17 units subcutaneously once daily.'
   },
   cjcipam: {
-    premier:'Inject 7 units subcutaneously Monday through Saturday, before bed, on an empty stomach.',
+    premier:'Inject 10 units subcutaneously Monday through Saturday, before bed, on an empty stomach.',
     greenwich:'Inject 5 units subcutaneously once daily before bed, on an empty stomach. Monday through Saturday, Sunday off recommended.'
+  },
+  cjcipam150: {
+    premier:'Inject 15 units subcutaneously Monday through Saturday, before bed, on an empty stomach.',
+    greenwich:'Inject 7.5 units subcutaneously once daily before bed, on an empty stomach. Monday through Saturday, Sunday off recommended.'
+  },
+  cjcipam200: {
+    premier:'Inject 20 units subcutaneously Monday through Saturday, before bed, on an empty stomach.',
+    greenwich:'Inject 10 units subcutaneously once daily before bed, on an empty stomach. Monday through Saturday, Sunday off recommended.'
   },
   ghkcu: {
     premier:'Inject 20 units subcutaneously three times weekly in the evening.',
@@ -768,11 +1013,15 @@ var ACTUAL_DIRECTIONS = {
   },
   tesamorelin1mg: {
     premier:'Inject 20 units subcutaneously every evening, Monday through Saturday (6 days on, 1 day off).',
-    greenwich:'Inject 34 units subcutaneously every evening, Monday through Saturday (6 days on, 1 day off).'
+    greenwich:'Inject 33 units subcutaneously every evening, Monday through Saturday (6 days on, 1 day off).'
+  },
+  tesamorelin15mg: {
+    premier:'Inject 30 units subcutaneously every evening, Monday through Saturday (6 days on, 1 day off).',
+    greenwich:'Inject 50 units subcutaneously every evening, Monday through Saturday (6 days on, 1 day off).'
   },
   tesamorelin2mg: {
     premier:'Inject 40 units subcutaneously every evening, Monday through Saturday (6 days on, 1 day off).',
-    greenwich:'Inject 66 units subcutaneously every evening, Monday through Saturday (6 days on, 1 day off).'
+    greenwich:'Inject 67 units subcutaneously every evening, Monday through Saturday (6 days on, 1 day off).'
   }
 };
 
@@ -803,6 +1052,8 @@ var PEAK_SCHEDULE = {
 
 // ─── LAB DATA ──────────────────────────────────────────────────────────────────
 // Source of truth: KORB Longevity Panel reference doc (confirmed 2026-07-09).
+// Panel names confirmed directly by Quest Diagnostics (Lauren Levin, Enterprise Accounts) 7/2026:
+// "KORB Standard Longevity", "KORB Men 45 Longevity", "KORB TRT".
 // As of this version there are only 3 KORB lab panels: Standard, Standard (Men 45+),
 // and TRT (not yet wired into this tool). GHK-Cu markers are now part of the baseline
 // Standard panel for every patient — there is no separate GHK-Cu add-on panel anymore.
@@ -838,7 +1089,7 @@ function labOrderLinesFull(start, isBaseline){
   var men45 = isMen45Plus();
   var out = [];
   out.push(isBaseline ? 'BASELINE LABS (send as STAT)' : '12-WEEK FOLLOW-UP LABS (send as Routine)');
-  out.push('Panel: KORB Longevity Panel — Standard'+(men45?', Men 45+':''));
+  out.push('Panel: '+(men45?'KORB Men 45 Longevity':'KORB Standard Longevity'));
   LAB_BASE.forEach(function(l){ out.push('  - '+l.name); });
   if(men45) out.push('  - '+LAB_MEN45.name);
   out.push('Priority: '+(isBaseline?'STAT':'Routine'));
@@ -865,7 +1116,7 @@ function renderLabOrder(start, isBaseline){
   }
 
   var copyLines = [];
-  copyLines.push('Panel: KORB Longevity Panel — Standard'+(men45?', Men 45+':''));
+  copyLines.push('Panel: '+(men45?'KORB Men 45 Longevity':'KORB Standard Longevity'));
   copyLines.push(isBaseline ? 'Order Window: Immediate — prior to Week 1 visit' : 'Order Window: '+wkRange(start,12));
   copyLines.push(isBaseline
     ? 'Note to Ops: No appointment scheduled yet. Schedule the Week 1 visit once results are received from Quest.'
@@ -875,7 +1126,7 @@ function renderLabOrder(start, isBaseline){
 
 // ─── PRICING DATA ──────────────────────────────────────────────────────────────
 // Source: Nick / Finance — "Pricing for HTML" doc, confirmed 2026-07-08.
-// Billing codes are TBD pending Tebra/CPT code assignment from Nick — do not treat as final.
+// Tebra procedure codes confirmed by Don's pricing spreadsheet, 2026-07-11 — final, not placeholders.
 var PRICING = {
   baseline: {
     label: 'Baseline Labs (one-time, before program selection)',
@@ -1029,13 +1280,28 @@ function getPharm(){
 function onProgramChange(){
   var prog=document.getElementById('selProgram').value;
   document.getElementById('fdnAgentGroup').style.display=(prog==='foundation')?'':'none';
+  document.getElementById('gwSermDoseGroup').style.display=(prog==='gateway')?'':'none';
+  document.getElementById('peakCjcDoseGroup').style.display=(prog==='peakA')?'':'none';
   document.getElementById('peakTesaGroup').style.display=(prog==='peakB')?'':'none';
   document.getElementById('ghkRow').style.display=(prog==='peakA'||prog==='peakB'||prog==='gateway')?'flex':'none';
   build();
 }
 
 // ─── MAIN DISPATCH ───────────────────────────────────────────────────────────────
+// Short, gender-aware IGF-1 escalation note shown under each dose selector.
+// Shows only the relevant ceiling once gender is selected; shows both if not.
+function renderIgf1Notes(){
+  var g = document.getElementById('selGender') ? document.getElementById('selGender').value : '';
+  var ceiling = g==='male' ? '&gt;190 ng/mL' : g==='female' ? '&gt;170 ng/mL' : '&gt;190 ng/mL (M) / &gt;170 ng/mL (F)';
+  var text = 'Target IGF-1: 120\u2013160 ng/mL. Escalate if below target at 16-wk recheck. Reduce dose if IGF-1 '+ceiling+'.';
+  ['igf1NoteSerm','igf1NoteCjc','igf1NoteTesa'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.innerHTML = text;
+  });
+}
+
 function build(){
+  renderIgf1Notes();
   var prog=document.getElementById('selProgram').value;
   document.getElementById('pageTitle').textContent='Functional Health & Longevity — Provider Clinical & Prescribing Reference';
 
@@ -1083,6 +1349,8 @@ function buildGateway(){
   var pk=getPharm(),ph=pk?PHARM[pk]:null;
   var ghkOn=document.getElementById('ghkChk').checked;
   var bpcKey='bpc157';
+  var sermDoseVal=document.getElementById('selGwSermDose').value;
+  var sermKey=(sermDoseVal==='200')?'sermorelin':'sermorelin'+sermDoseVal;
 
   document.getElementById('ovr').style.display=(st&&PREMIER.has(st))?'flex':'none';
 
@@ -1095,7 +1363,7 @@ function buildGateway(){
       :(st&&!PREMIER.has(st)?'Patient state ('+st+') is served by Greenwich Pharmacy.':'Override selected - using Greenwich Pharmacy.');
   } else {banner.style.display='none';}
 
-  var activeKeys=['sermorelin', bpcKey];
+  var activeKeys=[sermKey, bpcKey];
   if(ghkOn) activeKeys.push('ghkcu');
 
   if(visitType==='initial'){
@@ -1125,11 +1393,12 @@ function buildGateway(){
     rg.innerHTML=activeKeys.map(function(key){
       var d=RX[key];
       var instr=ACTUAL_DIRECTIONS[key][pk];
-      var sch=(key==='sermorelin')?'6 days on / 1 day off (Mon\u2013Sat, Sun off recommended) · Active Weeks 1\u201312':
+      var isSerm=(key.indexOf('sermorelin')===0);
+      var sch=isSerm?'6 days on / 1 day off (Mon\u2013Sat, Sun off recommended) · Active Weeks 1\u201312':
                (key==='bpc157')?RX[key].schedule:
                PEAK_SCHEDULE.ghkcu.schedule;
-      var dose=(key==='sermorelin')?'200 mcg':(key==='bpc157')?'500 mcg':'2 mg';
-      var wks=(key==='sermorelin')?'1\u201312':(key==='bpc157')?'3\u20138':'5\u20138';
+      var dose=isSerm?(sermDoseVal+' mcg'):(key==='bpc157')?'500 mcg':'2 mg';
+      var wks=isSerm?'1\u201312':(key==='bpc157')?'3\u20138':'5\u20138';
       return '<div class="rx-card"><div class="rx-hdr">'+d.name+'</div><div class="rx-ph" style="background:'+ph.color+'">'+ph.name+'</div><div class="rx-body"><strong>Dose:</strong> '+dose+'<br><strong>Active weeks:</strong> '+wks+' of 16-week cycle<br><strong>Schedule:</strong> '+sch+'<br><strong>Patient instructions:</strong> '+instr+'</div></div>';
     }).join('');
   } else {rg.style.display='none';}
@@ -1182,10 +1451,10 @@ function buildGateway(){
 
   // Tebra Prescribing Reference
   var gwSchedOverride={
-    sermorelin:{ schedule:'Nightly SQ · 6 days ON / 1 day OFF · Sunday off recommended · Active Weeks 1–12, off Weeks 13–16 of cycle', timing:'Bedtime, on an empty stomach (\u22652 hrs post-meal)' },
     bpc157:{ schedule:'Daily SQ · Weeks 3–8 of each 16-week cycle (starts 2 weeks after Sermorelin)', timing:'Any consistent time daily. No food restriction.' },
     ghkcu:{ schedule:'3x weekly SQ (evening) · Optional add-on · Weeks 5–8 of each 16-week cycle', timing:'3 times weekly, evening' }
   };
+  gwSchedOverride[sermKey]={ schedule:'Nightly SQ · 6 days ON / 1 day OFF · Sunday off recommended · Active Weeks 1–12, off Weeks 13–16 of cycle', timing:'Bedtime, on an empty stomach (\u22652 hrs post-meal)' };
   renderPrescribing(pk||'premier', activeKeys, gwSchedOverride);
   renderCounseling(activeKeys);
   renderLabs();
@@ -1198,10 +1467,10 @@ function buildGateway(){
   lines.push('PRESCRIPTIONS');
   if(ph){
     lines.push('Sermorelin');
-    lines.push('  Starting dose: 200 mcg  |  Titrate in 50 mcg increments at each 16-week visit based on IGF-1');
+    lines.push('  This cycle\u2019s dose: '+sermDoseVal+' mcg'+(sermDoseVal==='200'?' (starting dose)':'')+'  |  Escalation is lab-based: increase to the next step only if IGF-1 remains below target at the 16-week recheck');
     lines.push('  Schedule: 6 days on / 1 day off — Mon through Sat, Sunday off (recommended) · Active Weeks 1\u201312');
     lines.push('  Timing: Bedtime on an empty stomach');
-    lines.push('  Instructions: '+ACTUAL_DIRECTIONS.sermorelin[pk]);
+    lines.push('  Instructions: '+ACTUAL_DIRECTIONS[sermKey][pk]);
     lines.push('');
     lines.push(RX[bpcKey].name);
     lines.push('  Dose: 500 mcg daily  |  Active: Weeks 3\u20138 of this cycle');
@@ -1236,7 +1505,7 @@ function buildGateway(){
     var mon=addDays(d,day===0?1:(day===1?0:-(day-1)));
     var fri=addDays(mon,4);
     var dateStr=fmts(mon)+' \u2013 '+fmts(fri);
-    var sermCell=serm?'<span class="pill ps">Sermorelin · 6 on / 1 off</span>':'';
+    var sermCell=serm?'<span class="pill ps">Sermorelin '+sermDoseVal+'mcg · 6 on / 1 off</span>':'';
     var bpcCell=bpc?'<span class="pill pb">BPC-157 · daily</span>':'';
     var ghkCell=ghkOnWk?'<span class="pill po" style="background:#999;color:#fff;">GHK-Cu · weekly</span>':'';
     var rowStyle=(w===1||w===16)?'background:#EEF0FA;':(w===12)?'background:#FFF8E1;':'';
@@ -1420,7 +1689,10 @@ function buildFoundationCompare(){
 // Dose label + active-weeks window per drug key, for consistent Rx snapshot cards across programs
 function peakDoseLabel(key, pk){
   if(key==='cjcipam') return FOUNDATION_AGENTS.cjcipam.doseLabelByPharm[pk];
+  if(key==='cjcipam150') return '150 mcg/150 mcg';
+  if(key==='cjcipam200') return '200 mcg/200 mcg';
   if(key==='tesamorelin1mg') return '1 mg';
+  if(key==='tesamorelin15mg') return '1.5 mg';
   if(key==='tesamorelin2mg') return '2 mg';
   if(key==='bpc157') return '500 mcg';
   if(key==='ghkcu') return '2 mg';
@@ -1443,13 +1715,20 @@ function buildPeak(pathwayKey){
   var ghkOn=document.getElementById('ghkChk').checked;
   var bpcKey = 'bpc157';
 
-  // Resolve primary agent key (Tesamorelin is dose-selectable)
+  // Resolve primary agent key (CJC-1295/Ipamorelin and Tesamorelin are both dose-selectable)
   var primaryKey = pathway.primaryKey;
   var primaryLabel = pathway.primaryLabel;
+  var primaryDoseVal = '';
   if(pathwayKey==='peakB'){
     var dose=document.getElementById('selTesaDose').value;
     primaryKey = 'tesamorelin'+dose;
-    primaryLabel = 'Tesamorelin '+dose;
+    primaryDoseVal = (dose==='15mg') ? '1.5mg' : dose;
+    primaryLabel = 'Tesamorelin '+primaryDoseVal;
+  } else if(pathwayKey==='peakA'){
+    var cjcDose=document.getElementById('selCjcDose').value;
+    primaryKey = (cjcDose==='100') ? 'cjcipam' : 'cjcipam'+cjcDose;
+    primaryDoseVal = cjcDose;
+    primaryLabel = 'CJC-1295/Ipamorelin '+cjcDose+'mcg/'+cjcDose+'mcg';
   }
 
   document.getElementById('ovr').style.display=(st&&PREMIER.has(st))?'flex':'none';
@@ -1733,12 +2012,12 @@ function renderLabs(){
 
   html += '<div class="sec csec-hdr" style="margin-top:16px;" onclick="togSec(\'labsMain\')">KORB Longevity Panels — Test Reference<span class="tog" id="tog-labsMain">&#9658; expand</span></div>';
   html += '<div class="csec-body collapsed" id="body-labsMain">';
-  html += '<div class="subsec">KORB Longevity Panel — Standard (Men Under 45 &amp; All Women)</div>';
+  html += '<div class="subsec">KORB Standard Longevity (Men Under 45 &amp; All Women)</div>';
   html += '<div class="lab-wrap"><table class="lab"><thead><tr><th>Test Name</th><th style="width:100px">Quest Code</th></tr></thead><tbody>';
   LAB_BASE.forEach(function(l){ html += '<tr><td>'+l.name+'</td><td style="font-family:monospace">'+l.code+'</td></tr>'; });
   html += '</tbody></table></div>';
 
-  html += '<div class="subsec">KORB Longevity Panel — Standard, Men Age 45 and Older</div>';
+  html += '<div class="subsec">KORB Men 45 Longevity (Men Age 45 and Older)</div>';
   html += '<div style="font-size:12px;color:var(--mu);margin-bottom:8px;">Same panel as above, plus PSA at every draw.</div>';
   html += '<div class="lab-wrap"><table class="lab"><thead><tr><th>Test Name</th><th style="width:100px">Quest Code</th></tr></thead><tbody>';
   LAB_BASE.forEach(function(l){ html += '<tr><td>'+l.name+'</td><td style="font-family:monospace">'+l.code+'</td></tr>'; });
@@ -1812,6 +2091,8 @@ document.getElementById('ghkChk').addEventListener('change',build);
 document.getElementById('selGender').addEventListener('change',build);
 document.getElementById('patAge').addEventListener('input',build);
 document.getElementById('fdnAgentGroup').style.display=(document.getElementById('selProgram').value==='foundation')?'':'none';
+document.getElementById('gwSermDoseGroup').style.display=(document.getElementById('selProgram').value==='gateway')?'':'none';
+document.getElementById('peakCjcDoseGroup').style.display=(document.getElementById('selProgram').value==='peakA')?'':'none';
 
 // ─── VISIT TYPE (shared toggle) ─────────────────────────────────────────────
 var visitType = 'routine'; // 'initial' | 'routine'
